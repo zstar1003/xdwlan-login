@@ -2,6 +2,10 @@
 
 REPO="https://github.com/silverling/xdwlan-login"
 
+function command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
 # Detech the OS distribution
 if [ -f /etc/os-release ]; then
     . /etc/os-release
@@ -37,21 +41,41 @@ INSTALLER_DIR=/tmp/xdwlan-login-installer
 URL=$REPO/releases/latest/download/xdwlan-login-x86_64-unknown-linux-musl.tar.xz
 mkdir -p $INSTALLER_DIR
 
-function command_exists() {
-    command -v "$1" >/dev/null 2>&1
-}
-
-echo "正在下载安装包..."
-if command_exists wget; then
-    wget -q --show-progress -O $INSTALLER_DIR/xdwlan-login.tar.xz $URL
-elif command_exists curl; then
-    curl --progress-bar -SL $URL -o $INSTALLER_DIR/xdwlan-login.tar.xz
-else
-    echo "请安装 wget 或者 curl 以下载安装包 (例如， sudo apt-get install -y wget)"
+# Find the local file
+if [ $# -gt 1 ]; then
+    echo "错误：最多只能指定一个文件路径" >&2
     exit 1
+elif [ $# -eq 1 ]; then
+    if [ -f "./$1" ]; then
+        FILENAME="$1"
+    else
+        echo "错误：指定的文件不存在" >&2
+        exit 1
+    fi
+else 
+    FILENAME=$(basename "$URL")
 fi
 
-[[ $? -ne 0 ]] && echo "下载失败" && exit 1
+
+if [ -f "./$FILENAME" ]; then
+    echo "发现本地安装包，跳过下载..."
+    cp "./$FILENAME" "$INSTALLER_DIR/xdwlan-login.tar.xz" || {
+        echo "复制安装包失败"
+        exit 1
+    }
+else
+    echo "正在下载安装包..."
+    if command_exists wget; then
+        wget -q --show-progress -O $INSTALLER_DIR/xdwlan-login.tar.xz $URL
+    elif command_exists curl; then
+        curl --progress-bar -SL $URL -o $INSTALLER_DIR/xdwlan-login.tar.xz
+    else
+        echo "请安装 wget 或者 curl 以下载安装包 (例如， sudo apt-get install -y wget)"
+        exit 1
+    fi
+
+    [[ $? -ne 0 ]] && echo "下载失败" && exit 1
+fi
 
 echo "正在安装..."
 tar -xf $INSTALLER_DIR/xdwlan-login.tar.xz -C $INSTALLER_DIR
