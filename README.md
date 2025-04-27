@@ -32,9 +32,14 @@ curl -sSL https://github.com/silverling/xdwlan-login/raw/refs/heads/main/scripts
 
 PS：该程序依赖 Chromium-based 浏览器，<ins>**安装脚本会自动帮你通过包管理器安装 Chromium**</ins>，如果手动从 [Release](https://github.com/silverling/xdwlan-login/releases) 处下载，则需要手动安装浏览器。在安装脚本中，该程序将被自动安装到 `/usr/local/bin/xdwlan-login`。
 
+PS：如果你的网络无法连接到 GitHub 导致下载失败，也可以通过其他方式手动下载 [`install.sh`](https://github.com/silverling/xdwlan-login/raw/refs/heads/main/scripts/install.sh) 和 [`xdwlan-login-x86_64-unknown-linux-musl.tar.xz`](https://github.com/silverling/xdwlan-login/releases/latest/download/xdwlan-login-x86_64-unknown-linux-musl.tar.xz) 到同一目录，然后在该目录下执行
+```bash
+bash ./install.sh xdwlan-login-x86_64-unknown-linux-musl.tar.xz
+```
+
 2. 方法二：手动安装
     - 下载并解压
-        ```
+        ```bash
         curl -sSL https://github.com/silverling/xdwlan-login/releases/latest/download/xdwlan-login-x86_64-unknown-linux-musl.tar.xz -O xdwlan-login.tar.xz
         tar -xf xdwlan-login.tar.xz
         ```
