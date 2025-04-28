@@ -8,11 +8,16 @@ use super::{AppEvent, Task};
 pub struct LoginTask {
     username: String,
     password: String,
+    domain: String,
 }
 
 impl LoginTask {
-    pub fn new(username: String, password: String) -> Self {
-        LoginTask { username, password }
+    pub fn new(username: String, password: String, domain: String) -> Self {
+        LoginTask {
+            username,
+            password,
+            domain,
+        }
     }
 
     pub fn is_online(&self) -> bool {
@@ -127,10 +132,12 @@ impl LoginTask {
                     }
                     document.querySelector('#username').value = 'username_placeholder';
                     document.querySelector('#password').value = 'password_placeholder';
+                    document.querySelector('#domain').value = 'domain_placeholder'; 
                     document.querySelector('#login-account').click();
                 }"#
                 .replace("username_placeholder", &self.username)
                 .replace("password_placeholder", &self.password)
+                .replace("domain_placeholder", &self.domain)
                 .as_str(),
                 vec![],
                 false,

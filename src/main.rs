@@ -53,7 +53,7 @@ fn run() -> anyhow::Result<()> {
     log::info!("Start.");
 
     let config = load_config()?;
-    let login_task = LoginTask::new(config.username, config.password);
+    let login_task = LoginTask::new(config.username, config.password, config.domain);
 
     match args.get_one::<bool>("oneshot") {
         Some(true) => {

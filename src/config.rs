@@ -6,6 +6,8 @@ use serde::Deserialize;
 pub struct Config {
     pub username: String,
     pub password: String,
+    #[serde(default)]
+    pub domain: String,
 }
 
 pub fn load_config() -> anyhow::Result<Config> {
@@ -35,5 +37,13 @@ pub fn load_config() -> anyhow::Result<Config> {
     };
     let config: Config = serde_yaml::from_str(&config)?;
 
-    Ok(config)
+    match config.domain.as_str() {
+        "" | "@dx" | "@lt" | "@yd" => Ok(config),
+        _ => Err(anyhow::anyhow!(
+            "Invalid domain config: {}, available options are {} or leave it empty.",
+            config.domain,
+            vec!["@dx", "@lt", "@yd"].join(", ")
+        )
+        .into()),
+    }
 }
