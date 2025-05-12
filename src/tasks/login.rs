@@ -67,7 +67,13 @@ impl LoginTask {
         log::info!("Got login url: {}", url);
 
         let program_folder = crate::utils::get_program_folder();
-        let login_exe = program_folder.join("login");
+
+        #[cfg(target_os = "windows")]
+        let login_exe = program_folder.join("xdwlan-login-worker.exe");
+
+        #[cfg(target_os = "linux")]
+        let login_exe = program_folder.join("xdwlan-login-worker");
+
         let output = std::process::Command::new(login_exe)
             .env("NODE_ENV", NODE_ENV)
             .env("XDWLAN_LOGIN_URL", &url)
