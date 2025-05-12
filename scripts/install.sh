@@ -105,7 +105,7 @@ install() {
 
     # Create systemd service file
     info "正在创建 systemd 服务文件..."
-    SERVICE_FILE="/etc/systemd/system/xdwlan-login@.service"
+    SERVICE_FILE="/etc/systemd/system/xdwlan-login.service"
     cat <<EOF | sudo tee $SERVICE_FILE >/dev/null
 [Unit]
 Description=xdwlan-login service
@@ -114,8 +114,6 @@ After=network.target
 [Service]
 ExecStart=/usr/local/bin/xdwlan-login
 Restart=on-failure
-User=%i
-Environment=XDG_CONFIG_HOME=/home/%i/.config
 
 [Install]
 WantedBy=multi-user.target
@@ -128,17 +126,13 @@ notice() {
     completed "安装完成!"
     cat <<EOF
 
-请新建文件 ~/.config/xdwlan-login/config.yaml，并填入以下内容:
-
-    username: <学号>
-    password: <密码>
-
+请修改文件 /opt/xdwlan-login/config.yaml，并填入学号和密码。
 然后运行 xdwlan-login --oneshot 即可登录校园网。
 
 也可以不加 --oneshot 参数，让 xdwlan-login 以守护进程的方式运行，以实现自动登录和断网重连。
 如果你想开机自动登录，可以开启 xdwlan-login 服务:
 
-    sudo systemctl enable --now xdwlan-login@$(whoami).service
+    sudo systemctl enable --now xdwlan-login.service
 
 如果使用过程中遇到问题，请在 Issues 中反馈，谢谢!
 项目地址: $REPO
