@@ -1,3 +1,5 @@
 /target
 /config.yaml
 /dist
+
+/node_modules
