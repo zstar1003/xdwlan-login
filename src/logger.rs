@@ -1,22 +1,26 @@
 use std::io::Write;
 
+use env_logger::fmt::Formatter;
+
 const TIME_FORMAT: &str = "%Y-%m-%dT%H:%M:%S%.3f%:z";
+
+fn logger_formatter(buf: &mut Formatter, record: &log::Record<'_>) -> std::io::Result<()> {
+    writeln!(
+        buf,
+        "[{} {} {}] {}",
+        chrono::Local::now().format(TIME_FORMAT),
+        record.level(),
+        record.target(),
+        record.args()
+    )
+}
 
 #[cfg(debug_assertions)] // Debug mode.
 pub fn setup_logger() {
     use log::LevelFilter;
 
     env_logger::Builder::from_default_env()
-        .format(|buf, record| {
-            writeln!(
-                buf,
-                "[{} {} {}] {}",
-                chrono::Local::now().format(TIME_FORMAT),
-                record.level(),
-                record.target(),
-                record.args()
-            )
-        })
+        .format(logger_formatter)
         .filter(None, LevelFilter::Debug)
         .init();
 }
@@ -29,16 +33,7 @@ pub fn setup_logger() {
         .default_write_style_or("always");
 
     env_logger::Builder::from_env(env)
-        .format(|buf, record| {
-            writeln!(
-                buf,
-                "[{} {} {}] {}",
-                chrono::Local::now().format(TIME_FORMAT),
-                record.level(),
-                record.target(),
-                record.args()
-            )
-        })
+        .format(logger_formatter)
         .init();
 }
 
@@ -64,16 +59,7 @@ pub fn setup_logger() {
         .default_write_style_or("always");
 
     env_logger::Builder::from_env(env)
-        .format(|buf, record| {
-            writeln!(
-                buf,
-                "[{} {} {}] {}",
-                chrono::Local::now().format(TIME_FORMAT),
-                record.level(),
-                record.target(),
-                record.args()
-            )
-        })
+        .format(logger_formatter)
         .target(env_logger::Target::Pipe(target))
         .init();
 }

@@ -9,7 +9,6 @@ anyhow = "1.0.86"
 chrono = "0.4.38"
 log = "0.4.22"
 env_logger = "0.11.3"
-headless_chrome = "1.0.15"
 reqwest = { version = "0.12.5", features = ["blocking", "native-tls-vendored"] }
 serde = { version = "1.0.203", features = ["derive"] }
 serde_yaml = "0.9.34"
@@ -31,4 +30,7 @@ clap = "4.5.19"
 
 
 [profile.release]
-opt-level = "z" # Optimize for size.
+strip = true      # Automatically strip symbols from the binary.
+opt-level = "z"   # Optimize for size.
+lto = true
+codegen-units = 1
