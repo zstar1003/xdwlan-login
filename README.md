@@ -48,7 +48,7 @@ bash ./install.sh xdwlan-login-x86_64-unknown-linux-gnu.tar.xz
 4. 运行程序。程序有三种运行模式：
     - `xdwlan-login --oneshot`：登录校园网，然后退出。
     - `xdwlan-login`：登录校园网，然后持续运行，定时监测网络状态，自动断网重连。
-    - `sudo systemctl enable --now xdwlan-login@$(whoami).service`：开机自启，然后持续运行，定时监测网络状态，自动断网重连。
+    - `sudo systemctl enable --now xdwlan-login.service`：开机自启，然后持续运行，定时监测网络状态，自动断网重连。
 
 
 
