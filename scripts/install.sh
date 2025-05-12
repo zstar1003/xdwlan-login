@@ -4,7 +4,7 @@ set -eu
 printf '\n'
 
 REPO="https://github.com/silverling/xdwlan-login"
-DOWNLOAD_URL="$REPO/releases/latest/download/xdwlan-login-x86_64-unknown-linux-musl.tar.xz"
+DOWNLOAD_URL="$REPO/releases/latest/download/xdwlan-login-x86_64-unknown-linux-gnu.tar.xz"
 INSTALLER_DIR=/tmp/xdwlan-login-installer
 ARGC="$#"
 ARGS=("$@")
@@ -40,25 +40,6 @@ completed() {
 
 has() {
     command -v "$1" 1>/dev/null 2>&1
-}
-
-# Check and install headless chromium browser if missing
-check_chromium() {
-    if ! has chromium-browser; then
-        info "正在安装依赖..."
-        if [[ $distro == "ubuntu" ]]; then
-            sudo apt-get update
-            sudo apt-get install -y chromium-browser
-        elif [[ $distro == "debian" ]]; then
-            sudo apt-get update
-            sudo apt-get install -y chromium-browser
-        elif [[ $distro == "arch" ]]; then
-            sudo pacman -Sy --noconfirm chromium
-        else
-            error "请手动通过包管理器安装 chromium 或基于此的浏览器"
-            exit 1
-        fi
-    fi
 }
 
 download() {
@@ -116,7 +97,9 @@ download() {
 install() {
     info "正在安装..."
     tar -xf $INSTALLER_DIR/xdwlan-login.tar.xz -C $INSTALLER_DIR
-    sudo cp $INSTALLER_DIR/xdwlan-login /usr/local/bin
+    [ -d "/opt/xdwlan-login" ] && sudo rm -r /opt/xdwlan-login
+    sudo cp -r $INSTALLER_DIR/xdwlan-login-x86_64-unknown-linux-gnu /opt/xdwlan-login
+    sudo ln -sf /opt/xdwlan-login/xdwlan-login /usr/local/bin/xdwlan-login
     sudo chmod +x /usr/local/bin/xdwlan-login
     mkdir -p ~/.config/xdwlan-login
 
@@ -163,7 +146,6 @@ notice() {
 EOF
 }
 
-check_chromium
 download
 install
 notice
