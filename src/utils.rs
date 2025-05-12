@@ -1,10 +1,8 @@
 use std::{env, path::PathBuf};
 
 pub fn get_program_path() -> PathBuf {
-    env::current_exe()
-        .expect("Failed to get current executable path")
-        .canonicalize()
-        .expect("Failed to canonicalize path")
+    let program_path = env::current_exe().expect("Failed to get current executable path");
+    dunce::canonicalize(program_path).expect("Failed to canonicalize path")
 }
 
 pub fn get_program_folder() -> PathBuf {
