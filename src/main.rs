@@ -1,5 +1,8 @@
-// Disable console popup on windows
-#![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
+// Disable console popup on Windows only in release builds
+#![cfg_attr(
+    all(target_os = "windows", not(debug_assertions)),
+    windows_subsystem = "windows"
+)]
 
 use std::sync::mpsc;
 use std::thread;
@@ -19,7 +22,7 @@ fn run() -> anyhow::Result<()> {
     let (tx_tray, rx_tray) = mpsc::channel();
 
     let config = load_config()?;
-    let login_task = LoginTask::new(config.username, config.password);
+    let login_task = LoginTask::new(config.username, config.password, config.domain);
     let login_task_handle = thread::spawn(move || login_task.run(tx_tray, rx_login));
 
     TrayTask::new().run(tx_login, rx_tray)?;
@@ -93,7 +96,6 @@ fn run() -> anyhow::Result<()> {
             signal_hook::flag::register(signal_hook::consts::SIGTERM, Arc::clone(&term))?;
 
             while !term.load(Ordering::Relaxed) {
-                log::debug!("Main task is running.");
                 thread::sleep(Duration::from_secs(1));
             }
             tx_login.send(AppEvent::Quit)?;
